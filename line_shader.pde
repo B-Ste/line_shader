@@ -11,10 +11,10 @@ import processing.svg.*;
 */
 
 static final String NAME = "katze.jpeg";
-static final int SIZE = 100;
+static final int SIZE = 150;
 static final int LEVELS = 6;
 static final float SQ_SIZE = 10;
-static final boolean VERTICAL = false;
+static final boolean VERTICAL = true;
 
 /*
   END OF SETTINGS
@@ -31,11 +31,7 @@ void setup() {
   // resize and load image
   img = loadImage("data/" + NAME);
   if (img == null) exit();
-  if (img.width >= img.height) {
-    img.resize(SIZE, 0);
-  } else {
-    img.resize(0, SIZE);
-  }
+  img.resize(SIZE, 0);
   img.loadPixels();
   
   // pre-calculate distances between lines for levels
