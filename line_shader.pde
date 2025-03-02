@@ -7,12 +7,14 @@ import processing.svg.*;
   SIZE: Size of larger side of the image after downscale.
   LEVELS: Number of differentiated brightness-levels. Maximum n-1 lines.
   SQ_SIZE: Size of one pixel when upscaled for output.
+  VERTICAL: Set for shading with vertical lines, unset for shading with horizontal lines. 
 */
 
 static final String NAME = "katze.jpeg";
 static final int SIZE = 100;
-static final int LEVELS = 4;
+static final int LEVELS = 6;
 static final float SQ_SIZE = 10;
+static final boolean VERTICAL = false;
 
 /*
   END OF SETTINGS
@@ -36,13 +38,13 @@ void setup() {
   }
   img.loadPixels();
   
-  beginRecord(SVG, "out/output.svg");
-  
   // pre-calculate distances between lines for levels
   delta[0] = SQ_SIZE;
   for (int i = 1; i < delta.length; i++) {
     delta[i] = SQ_SIZE / i;
   }
+  
+  beginRecord(SVG, "out/output.svg");
   
   // iterate through pixels and draw lines according to brightness
   for (int y = 0; y < img.height; y++) {
@@ -51,7 +53,11 @@ void setup() {
       int lines = (LEVELS - 1) - (int) ((b * LEVELS) / 256);
       float dt = delta[lines];
       for (int i = 0; i < lines; i++) {
-        line(x * SQ_SIZE + (i + 1) * dt, y * SQ_SIZE, x * SQ_SIZE + (i + 1) * dt, (y + 1) * SQ_SIZE);
+        if (VERTICAL) {
+          line(x * SQ_SIZE + (i + 1) * dt, y * SQ_SIZE, x * SQ_SIZE + (i + 1) * dt, (y + 1) * SQ_SIZE);
+        } else {
+          line(x * SQ_SIZE, y * SQ_SIZE + (i + 1) * dt, (x + 1) * SQ_SIZE, y * SQ_SIZE + (i + 1) * dt);
+        }
       }
     }
   }
