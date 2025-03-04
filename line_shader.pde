@@ -11,7 +11,7 @@ import processing.svg.*;
 */
 
 static final String NAME = "katze.jpeg";
-static final int SIZE = 150;
+static final int SIZE = 200;
 static final int LEVELS = 6;
 static final float SQ_SIZE = 10;
 static final boolean VERTICAL = true;
@@ -22,13 +22,13 @@ static final boolean VERTICAL = true;
 
 static PImage img;
 static float[] delta = new float[LEVELS];
+static int[] lines = new int[256]; 
 
 void settings() {
   size((int) (SIZE * SQ_SIZE), (int) (SIZE * SQ_SIZE));
 }
 
 void setup() {
-  // resize and load image
   img = loadImage("data/" + NAME);
   if (img == null) exit();
   img.resize(SIZE, 0);
@@ -40,15 +40,20 @@ void setup() {
     delta[i] = SQ_SIZE / i;
   }
   
+  // pre-calculate number of lines in relation to brightness
+  for (int i = 0; i < 256; i++) {
+    lines[i] = (LEVELS - 1) - (int) ((i * LEVELS) / 256);
+  }
+  
   beginRecord(SVG, "out/output.svg");
   
   // iterate through pixels and draw lines according to brightness
   for (int y = 0; y < img.height; y++) {
     for (int x = 0; x < img.width; x++) {
       double b = brightness(img.pixels[y * img.width + x]);
-      int lines = (LEVELS - 1) - (int) ((b * LEVELS) / 256);
-      float dt = delta[lines];
-      for (int i = 0; i < lines; i++) {
+      int nl = lines[(int) b];
+      float dt = delta[nl];
+      for (int i = 0; i < nl; i++) {
         if (VERTICAL) {
           line(x * SQ_SIZE + (i + 1) * dt, y * SQ_SIZE, x * SQ_SIZE + (i + 1) * dt, (y + 1) * SQ_SIZE);
         } else {
